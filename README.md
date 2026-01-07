@@ -1,3 +1,17 @@
+## Optimax Chatwoot Image
+
+Registry: `ghcr.io/saokimdigital/optimax-chatwoot`
+
+### Tags
+- Release: `vX.Y.Z-sk.N` (pin in infra)
+- CI: `sha-<shortsha>` (for testing)
+
+### Base
+This image extends `chatwoot/chatwoot:v4.8.0-ce`.
+Runtime config (FRONTEND_URL, DB, REDIS, etc.) is provided by optimax-infra.
+
+
+
 <img src="./.github/screenshots/header.png#gh-light-mode-only" width="100%" alt="Header light mode"/>
 <img src="./.github/screenshots/header-dark.png#gh-dark-mode-only" width="100%" alt="Header dark mode"/>
 
