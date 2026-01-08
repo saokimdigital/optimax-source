@@ -149,10 +149,4 @@ COPY --from=pre-builder /app/.git_sha /app/.git_sha
 
 WORKDIR /app
 
-# Optimax Chatwoot - extend from official CE image (stable baseline)
-FROM chatwoot/chatwoot:v4.8.0-ce
-
-# Optional: add custom assets / configs (keep minimal)
-# COPY ./your-custom-file /app/...
-
 EXPOSE 3000
