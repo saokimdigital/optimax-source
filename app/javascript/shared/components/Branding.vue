@@ -34,6 +34,9 @@ export default {
       try {
         const referrerHost = this.$store.getters['appConfig/getReferrerHost'];
         const url = new URL(this.globalConfig.widgetBrandURL);
+        
+        // Fix url is saokim.com.vn
+        url.hostname = 'https://www.saokim.com.vn';
         if (referrerHost) {
           url.searchParams.set('utm_source', referrerHost);
           url.searchParams.set('utm_medium', 'widget');
