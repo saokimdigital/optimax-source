@@ -33,7 +33,7 @@ export default {
     brandRedirectURL() {
       try {
         const referrerHost = this.$store.getters['appConfig/getReferrerHost'];
-        const url = new URL(this.globalConfig.widgetBrandURL);
+        let url = new URL(this.globalConfig.widgetBrandURL);
         
         // Fix url is saokim.com.vn
         url = new URL('https://www.saokim.com.vn');

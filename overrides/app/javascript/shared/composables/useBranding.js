@@ -17,7 +17,7 @@ export function useBranding() {
     // const installationName = globalConfig.value?.installationName;
 
     // Fix branding is Sao Kim Branding
-    let installationName = "SaoKim Optimax";
+    let installationName = "Sao Kim";
     if (!installationName) return text;
 
     return text.replace(/Chatwoot/g, installationName);
