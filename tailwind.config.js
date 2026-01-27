@@ -35,6 +35,7 @@ const tailwindConfig = {
     './app/javascript/dashboard/components-next/**/*.js',
     './app/javascript/dashboard/routes/dashboard/**/**/*.js',
     './app/views/**/*.html.erb',
+    './overrides/**/*.{js,vue}'
   ],
   theme: {
     extend: {
