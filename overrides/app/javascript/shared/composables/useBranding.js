@@ -2,7 +2,8 @@
  * Composable for branding-related utilities
  * Provides methods to customize text with installation-specific branding
  */
-import { useMapGetter } from 'dashboard/composables/store.js';
+//import { useMapGetter } from 'dashboard/composables/store.js';
+import { useMapGetter } from '@/overrides/app/javascript/dashboard/composables/store.js';
 
 export function useBranding() {
   const globalConfig = useMapGetter('globalConfig/get');
@@ -14,10 +15,8 @@ export function useBranding() {
   const replaceInstallationName = text => {
     if (!text) return text;
 
-    // const installationName = globalConfig.value?.installationName;
+    const installationName = globalConfig.value?.installationName;
 
-    // Fix branding is Sao Kim Branding
-    let installationName = "Sao Kim";
     if (!installationName) return text;
 
     return text.replace(/Chatwoot/g, installationName);

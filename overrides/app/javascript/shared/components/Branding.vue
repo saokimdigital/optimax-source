@@ -1,5 +1,5 @@
 <script>
-import { useBranding } from 'shared/composables/useBranding';
+import { useBranding } from '@/overrides/app/javascript/shared/composables/useBranding';
 
 const {
   LOGO_THUMBNAIL: logoThumbnail,
@@ -33,10 +33,8 @@ export default {
     brandRedirectURL() {
       try {
         const referrerHost = this.$store.getters['appConfig/getReferrerHost'];
-        let url = new URL(this.globalConfig.widgetBrandURL);
+        const url = new URL(this.globalConfig.widgetBrandURL);
         
-        // Fix url is saokim.com.vn
-        url = new URL('https://www.saokim.com.vn');
         if (referrerHost) {
           url.searchParams.set('utm_source', referrerHost);
           url.searchParams.set('utm_medium', 'widget');
