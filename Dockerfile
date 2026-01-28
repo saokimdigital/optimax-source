@@ -3,52 +3,44 @@
 ARG CHATWOOT_BASE=chatwoot/chatwoot:v4.8.0-ce
 
 ############################################
-# Builder
+# Builder: build assets with source + overrides
 ############################################
-FROM ${CHATWOOT_BASE} AS builder
+FROM node:20-bullseye AS builder
 
-ARG RAILS_ENV=production
-ARG NODE_ENV=production
+# Rails env for asset compilation
+ENV RAILS_ENV=production \
+    NODE_ENV=production \
+    # Disable husky in CI/build image
+    HUSKY=0
 
 WORKDIR /app
 
-# Copy full source from your fork
+# 1) Copy full source
 COPY . /app
 
-# Apply overrides BEFORE build
+# 2) Apply overrides BEFORE build/precompile
+# Your overrides structure should be: overrides/app/...
 RUN if [ -d "/app/overrides" ]; then cp -R /app/overrides/* /app/ ; fi
 
-# --- Install Node + npm (base image may not ship with them) ---
-RUN set -eux; \
-  if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then \
-    echo "Node/npm already present"; \
-  elif [ -f /etc/alpine-release ]; then \
-    apk add --no-cache nodejs npm; \
-  else \
-    apt-get update; \
-    apt-get install -y --no-install-recommends nodejs npm; \
-    rm -rf /var/lib/apt/lists/*; \
-  fi
+# 3) pnpm must be 10.x (repo requires it)
+RUN corepack enable && corepack prepare pnpm@10.5.2 --activate
+RUN pnpm -v
 
-# Install pnpm (don't use corepack)
-RUN npm i -g pnpm@10.5.2
+# 4) Install JS deps (no pnpm build at repo root)
+RUN pnpm install --frozen-lockfile
 
-# Debug versions (makes CI logs obvious)
-RUN node -v && npm -v && pnpm -v
-
-# Ruby deps
+# 5) Install Ruby deps
 RUN bundle config set without 'development test' && \
     bundle install --jobs 4 --retry 3
 
-# Install JS deps (no pnpm build at root)
-RUN pnpm install --frozen-lockfile
-
-# Precompile assets (this is the real "build" for Chatwoot)
-RUN bundle exec rails assets:precompile
-
+# 6) Precompile assets
+# Rails requires SECRET_KEY_BASE in production to load environment.
+# We set a temporary value ONLY for build-time compilation.
+RUN SECRET_KEY_BASE=dummy_secret_key_base_for_assets_precompile \
+    bundle exec rails assets:precompile
 
 ############################################
-# Runtime
+# Runtime: keep Chatwoot base + copy compiled app
 ############################################
 FROM ${CHATWOOT_BASE} AS runtime
 
@@ -60,5 +52,9 @@ LABEL org.opencontainers.image.source="https://github.com/saokimdigital/optimax-
       org.opencontainers.image.created="${BUILD_DATE}"
 
 WORKDIR /app
+
+# Copy everything from builder (simplest + safest)
 COPY --from=builder /app /app
+
+# Ensure storage exists
 RUN mkdir -p /app/storage
