@@ -40,9 +40,12 @@ RUN node -v && npm -v && pnpm -v
 RUN bundle config set without 'development test' && \
     bundle install --jobs 4 --retry 3
 
-# Frontend build + Rails assets
-RUN pnpm install --frozen-lockfile && pnpm build
+# Install JS deps (no pnpm build at root)
+RUN pnpm install --frozen-lockfile
+
+# Precompile assets (this is the real "build" for Chatwoot)
 RUN bundle exec rails assets:precompile
+
 
 ############################################
 # Runtime
