@@ -31,7 +31,7 @@ RUN set -eux; \
   fi
 
 # Install pnpm (don't use corepack)
-RUN npm i -g pnpm@9.12.3
+RUN npm i -g pnpm@10.5.2
 
 # Debug versions (makes CI logs obvious)
 RUN node -v && npm -v && pnpm -v
