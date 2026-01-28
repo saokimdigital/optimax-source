@@ -3,44 +3,50 @@
 ARG CHATWOOT_BASE=chatwoot/chatwoot:v4.8.0-ce
 
 ############################################
-# Builder: build assets with source + overrides
+# Builder: Chatwoot base + add Node/pnpm + build assets
 ############################################
-FROM node:20-bullseye AS builder
+FROM ${CHATWOOT_BASE} AS builder
 
-# Rails env for asset compilation
 ENV RAILS_ENV=production \
     NODE_ENV=production \
-    # Disable husky in CI/build image
     HUSKY=0
 
 WORKDIR /app
 
-# 1) Copy full source
+# Copy full source
 COPY . /app
 
-# 2) Apply overrides BEFORE build/precompile
-# Your overrides structure should be: overrides/app/...
+# Apply overrides BEFORE build
 RUN if [ -d "/app/overrides" ]; then cp -R /app/overrides/* /app/ ; fi
 
-# 3) pnpm must be 10.x (repo requires it)
-RUN corepack enable && corepack prepare pnpm@10.5.2 --activate
-RUN pnpm -v
+# Install Node + npm (since base image may not ship with it)
+RUN set -eux; \
+  if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then \
+    echo "Node/npm already present"; \
+  elif [ -f /etc/alpine-release ]; then \
+    apk add --no-cache nodejs npm; \
+  else \
+    apt-get update; \
+    apt-get install -y --no-install-recommends nodejs npm ca-certificates git; \
+    rm -rf /var/lib/apt/lists/*; \
+  fi
 
-# 4) Install JS deps (no pnpm build at repo root)
+# Install pnpm 10.x (repo requires engines.pnpm 10.x)
+RUN npm i -g pnpm@10.5.2 && pnpm -v && node -v
+
+# JS deps
 RUN pnpm install --frozen-lockfile
 
-# 5) Install Ruby deps
+# Ruby deps (bundle exists in this image)
 RUN bundle config set without 'development test' && \
     bundle install --jobs 4 --retry 3
 
-# 6) Precompile assets
-# Rails requires SECRET_KEY_BASE in production to load environment.
-# We set a temporary value ONLY for build-time compilation.
+# Precompile assets (needs SECRET_KEY_BASE)
 RUN SECRET_KEY_BASE=dummy_secret_key_base_for_assets_precompile \
     bundle exec rails assets:precompile
 
 ############################################
-# Runtime: keep Chatwoot base + copy compiled app
+# Runtime
 ############################################
 FROM ${CHATWOOT_BASE} AS runtime
 
@@ -52,9 +58,5 @@ LABEL org.opencontainers.image.source="https://github.com/saokimdigital/optimax-
       org.opencontainers.image.created="${BUILD_DATE}"
 
 WORKDIR /app
-
-# Copy everything from builder (simplest + safest)
 COPY --from=builder /app /app
-
-# Ensure storage exists
 RUN mkdir -p /app/storage
