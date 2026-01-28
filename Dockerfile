@@ -3,7 +3,7 @@
 ARG CHATWOOT_BASE=chatwoot/chatwoot:v4.8.0-ce
 
 ############################################
-# 1) Builder: copy source + apply overrides + build assets
+# Builder
 ############################################
 FROM ${CHATWOOT_BASE} AS builder
 
@@ -12,36 +12,40 @@ ARG NODE_ENV=production
 
 WORKDIR /app
 
-# Copy the FULL source code of your fork into the image
-# (This is the missing piece in your current Dockerfile)
+# Copy full source from your fork
 COPY . /app
 
-# Apply overrides BEFORE building assets
-# If your overrides live at /overrides in repo root, this will overlay into /app/...
-RUN if [ -d "/app/overrides" ]; then \
-      cp -R /app/overrides/* /app/ ; \
-    fi
+# Apply overrides BEFORE build
+RUN if [ -d "/app/overrides" ]; then cp -R /app/overrides/* /app/ ; fi
 
-# Ensure storage exists (needed by Rails in some setups)
-RUN mkdir -p /app/storage
+# --- Install Node + npm (base image may not ship with them) ---
+RUN set -eux; \
+  if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then \
+    echo "Node/npm already present"; \
+  elif [ -f /etc/alpine-release ]; then \
+    apk add --no-cache nodejs npm; \
+  else \
+    apt-get update; \
+    apt-get install -y --no-install-recommends nodejs npm; \
+    rm -rf /var/lib/apt/lists/*; \
+  fi
 
-# Install deps and build assets
-# Use --frozen-lockfile to ensure reproducible builds
-# (If pnpm is not available in base image, see note below)
+# Install pnpm (don't use corepack)
+RUN npm i -g pnpm@9.12.3
+
+# Debug versions (makes CI logs obvious)
+RUN node -v && npm -v && pnpm -v
+
+# Ruby deps
 RUN bundle config set without 'development test' && \
     bundle install --jobs 4 --retry 3
 
-# Install pnpm (corepack may not exist in the base image)
-RUN node -v && npm -v && npm i -g pnpm@9.12.3
-
-RUN pnpm install --frozen-lockfile && \
-    pnpm build
-
-# Precompile Rails assets (this is what makes UI changes appear in production)
+# Frontend build + Rails assets
+RUN pnpm install --frozen-lockfile && pnpm build
 RUN bundle exec rails assets:precompile
 
 ############################################
-# 2) Runtime: keep base image, copy compiled output only
+# Runtime
 ############################################
 FROM ${CHATWOOT_BASE} AS runtime
 
@@ -53,11 +57,5 @@ LABEL org.opencontainers.image.source="https://github.com/saokimdigital/optimax-
       org.opencontainers.image.created="${BUILD_DATE}"
 
 WORKDIR /app
-
-# Copy only what needs to change at runtime:
-# - compiled assets
-# - updated Ruby/Rails code (if any)
-# Easiest safe approach: copy /app from builder (a bit bigger but simplest)
 COPY --from=builder /app /app
-
 RUN mkdir -p /app/storage
