@@ -31,7 +31,8 @@ RUN mkdir -p /app/storage
 RUN bundle config set without 'development test' && \
     bundle install --jobs 4 --retry 3
 
-RUN corepack enable && corepack prepare pnpm@9.12.3 --activate
+# Install pnpm (corepack may not exist in the base image)
+RUN node -v && npm -v && npm i -g pnpm@9.12.3
 
 RUN pnpm install --frozen-lockfile && \
     pnpm build
