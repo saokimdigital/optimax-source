@@ -3,13 +3,15 @@
 ARG CHATWOOT_BASE=chatwoot/chatwoot:v4.8.0-ce
 
 ############################################
-# Builder: Chatwoot base + add Node/pnpm + build assets
+# Builder
 ############################################
 FROM ${CHATWOOT_BASE} AS builder
 
 ENV RAILS_ENV=production \
     NODE_ENV=production \
-    HUSKY=0
+    HUSKY=0 \
+    BUNDLE_PATH=/gems \
+    GEM_HOME=/gems
 
 WORKDIR /app
 
@@ -19,7 +21,7 @@ COPY . /app
 # Apply overrides BEFORE build
 RUN if [ -d "/app/overrides" ]; then cp -R /app/overrides/* /app/ ; fi
 
-# Install Node + npm (since base image may not ship with it)
+# Install Node + npm if missing (base may not have them)
 RUN set -eux; \
   if command -v node >/dev/null 2>&1 && command -v npm >/dev/null 2>&1; then \
     echo "Node/npm already present"; \
@@ -31,17 +33,17 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*; \
   fi
 
-# Install pnpm 10.x (repo requires engines.pnpm 10.x)
+# pnpm 10.x (repo requires engines.pnpm 10.x)
 RUN npm i -g pnpm@10.5.2 && pnpm -v && node -v
 
 # JS deps
 RUN pnpm install --frozen-lockfile
 
-# Ruby deps (bundle exists in this image)
+# Ruby deps -> install into /gems
 RUN bundle config set without 'development test' && \
     bundle install --jobs 4 --retry 3
 
-# Precompile assets (needs SECRET_KEY_BASE)
+# Precompile assets (needs SECRET_KEY_BASE at build time)
 RUN SECRET_KEY_BASE=dummy_secret_key_base_for_assets_precompile \
     bundle exec rails assets:precompile
 
@@ -50,13 +52,17 @@ RUN SECRET_KEY_BASE=dummy_secret_key_base_for_assets_precompile \
 ############################################
 FROM ${CHATWOOT_BASE} AS runtime
 
-ARG VCS_REF=""
-ARG BUILD_DATE=""
-
-LABEL org.opencontainers.image.source="https://github.com/saokimdigital/optimax-source" \
-      org.opencontainers.image.revision="${VCS_REF}" \
-      org.opencontainers.image.created="${BUILD_DATE}"
+ENV RAILS_ENV=production \
+    NODE_ENV=production \
+    BUNDLE_PATH=/gems \
+    GEM_HOME=/gems
 
 WORKDIR /app
+
+# Copy app code + compiled assets
 COPY --from=builder /app /app
+
+# ✅ IMPORTANT: copy installed gems from builder
+COPY --from=builder /gems /gems
+
 RUN mkdir -p /app/storage
