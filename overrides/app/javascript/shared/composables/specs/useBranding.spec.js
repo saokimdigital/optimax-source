@@ -1,8 +1,8 @@
 import { useBranding } from '../useBranding';
-import { useMapGetter } from '@/overrides/app/javascript/dashboard/composables/store.js';
+import { useMapGetter } from 'dashboard/composables/store.js';
 
 // Mock the store composable
-vi.mock('@/overrides/app/javascript/dashboard/composables/store.js', () => ({
+vi.mock('dashboard/composables/store.js', () => ({
   useMapGetter: vi.fn(),
 }));
 

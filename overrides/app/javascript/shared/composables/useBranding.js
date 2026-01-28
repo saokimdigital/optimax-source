@@ -3,7 +3,7 @@
  * Provides methods to customize text with installation-specific branding
  */
 //import { useMapGetter } from 'dashboard/composables/store.js';
-import { useMapGetter } from '@/overrides/app/javascript/dashboard/composables/store.js';
+import { useMapGetter } from 'dashboard/composables/store.js';
 
 export function useBranding() {
   const globalConfig = useMapGetter('globalConfig/get');

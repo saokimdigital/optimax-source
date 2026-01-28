@@ -1,5 +1,5 @@
 <script>
-import { useBranding } from '@/overrides/app/javascript/shared/composables/useBranding';
+import { useBranding } from 'shared/composables/useBranding';
 
 const {
   LOGO_THUMBNAIL: logoThumbnail,
