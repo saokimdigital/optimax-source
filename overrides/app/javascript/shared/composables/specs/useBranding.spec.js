@@ -12,7 +12,7 @@ describe('useBranding', () => {
   beforeEach(() => {
     mockGlobalConfig = {
       value: {
-        installationName: 'MyCompany',
+        installationName: 'Optimax',
       },
     };
 
@@ -28,7 +28,7 @@ describe('useBranding', () => {
       const { replaceInstallationName } = useBranding();
       const result = replaceInstallationName('Welcome to Optimax');
 
-      expect(result).toBe('Welcome to MyCompany');
+      expect(result).toBe('Welcome to Optimax');
     });
 
     it('should replace multiple occurrences of "Optimax"', () => {
@@ -37,7 +37,7 @@ describe('useBranding', () => {
         'Optimax is great! Use Optimax today.'
       );
 
-      expect(result).toBe('MyCompany is great! Use MyCompany today.');
+      expect(result).toBe('Optimax is great! Use Optimax today.');
     });
 
     it('should return original text when installation name is not provided', () => {
