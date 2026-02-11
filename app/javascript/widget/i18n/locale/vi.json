@@ -26,12 +26,12 @@
     "IN_A_FEW_MINUTES": "Thường trả lời sau vài phút",
     "IN_A_FEW_HOURS": "Thường trả lời sau vài giờ",
     "IN_A_DAY": "Thường trả lời trong một ngày",
-    "BACK_IN_HOURS": "We will be back online in {n} hour | We will be back online in {n} hours",
-    "BACK_IN_MINUTES": "We will be back online in {time} minutes",
-    "BACK_AT_TIME": "We will be back online at {time}",
-    "BACK_ON_DAY": "We will be back online on {day}",
-    "BACK_TOMORROW": "We will be back online tomorrow",
-    "BACK_IN_SOME_TIME": "We will be back online in some time"
+    "BACK_IN_HOURS": "Chúng tôi sẽ trở lại trực tuyến sau {n} giờ",
+    "BACK_IN_MINUTES": "Chúng tôi sẽ trở lại trực tuyến sau {time} phút",
+    "BACK_AT_TIME": "Chúng tôi sẽ trở lại trực tuyến lúc {time}",
+    "BACK_ON_DAY": "Chúng tôi sẽ trở lại trực tuyến vào ngày {day}",
+    "BACK_TOMORROW": "Chúng tôi sẽ trở lại trực tuyến vào ngày mai",
+    "BACK_IN_SOME_TIME": "Chúng tôi sẽ trở lại trực tuyến trong một thời gian ngắn"
   },
   "DAY_NAMES": {
     "SUNDAY": "Chủ Nhật",
@@ -82,7 +82,7 @@
         "DIAL_CODE_VALID_ERROR": "Vui lòng chọn quốc gia",
         "VALID_ERROR": "Vui lòng nhập số điện thoại đúng",
         "DROPDOWN_EMPTY": "Không tìm thấy kết quả",
-        "DROPDOWN_SEARCH": "Search country"
+        "DROPDOWN_SEARCH": "Tìm kiếm quốc gia"
       },
       "MESSAGE": {
         "LABEL": "Tin nhắn",
@@ -93,7 +93,7 @@
     "CAMPAIGN_HEADER": "Vui lòng cung cấp tên và địa chỉ email của bạn trước khi bắt đầu hội thoại",
     "IS_REQUIRED": "được yêu cầu",
     "REQUIRED": "Bắt buộc",
-    "REGEX_ERROR": "Please provide a valid input"
+    "REGEX_ERROR": "Vui lòng cung cấp email hợp lệ"
   },
   "FILE_SIZE_LIMIT": "Tệp vượt quá kích thước giới hạn {MAXIMUM_FILE_UPLOAD_SIZE}",
   "CHAT_FORM": {
@@ -125,7 +125,7 @@
   "PORTAL": {
     "POPULAR_ARTICLES": "Popular Articles",
     "VIEW_ALL_ARTICLES": "Xem tất cả bài viết",
-    "IFRAME_LOAD_ERROR": "There was an error loading the article, please refresh the page and try again."
+    "IFRAME_LOAD_ERROR": "Lôi khi có lỗi khi tải bài viết, vui lòng làm mới trang và thử lại."
   },
   "ATTACHMENTS": {
     "image": {
