@@ -1,20 +1,20 @@
-<p>Hi <%= @resource.name %>,</p>
+<p>Chào <%= @resource.name %>,</p>
 
 <% account_user = @resource&.account_users&.first %>
 
 <% if account_user&.inviter.present? && @resource.unconfirmed_email.blank? %>
-  <p><%= account_user.inviter.name %>, with <%= account_user.account.name %>, has invited you to try out <%= global_config['BRAND_NAME'] || 'Chatwoot' %>.</p>
+  <p><%= account_user.inviter.name %>, with <%= account_user.account.name %>, đã mời bạn tham gia ứng dụng AI Agent chatbot <%= global_config['BRAND_NAME'] || 'Sao Kim Branding' %>.</p>
 <% end %>
 
 <% if @resource.confirmed? %>
-  <p>You can login to your <%= global_config['BRAND_NAME'] || 'Chatwoot' %> account through the link below:</p>
+  <p>Bạn có thể đăng nhập vào tài khoản <%= global_config['BRAND_NAME'] || 'Sao Kim Branding' %> của bạn thông qua liên kết dưới đây:</p>
 <% else %>
   <% if account_user&.inviter.blank? %>
   <p>
-    Welcome to <%= global_config['BRAND_NAME'] || 'Chatwoot' %>! We have a suite of powerful tools ready for you to explore. Before that we quickly need to verify your email address to know it's really you.
+    Chào mừng bạn đến với <%= global_config['BRAND_NAME'] || 'Sao Kim Branding' %>! Chúng tôi có một loạt công cụ mạnh mẽ sẵn sàng để bạn khám phá. Trước khi bắt đầu, chúng tôi cần xác minh địa chỉ email của bạn để đảm bảo đó là bạn thực sự.
   </p>
   <% end %>
-  <p>Please take a moment and click the link below and activate your account.</p>
+  <p>Vui lòng dành một chút thời gian và nhấp vào liên kết bên dưới để kích hoạt tài khoản của bạn.</p>
 <% end %>
 
 
