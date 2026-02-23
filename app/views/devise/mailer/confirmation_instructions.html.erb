@@ -7,11 +7,11 @@
 <% end %>
 
 <% if @resource.confirmed? %>
-  <p>Bạn có thể đăng nhập vào tài khoản <%= global_config['BRAND_NAME'] || 'Sao Kim Branding' %> của bạn thông qua liên kết dưới đây:</p>
+  <p>Bạn có thể đăng nhập vào tài khoản <%= global_config['BRAND_NAME'] || 'AI Agent Chatbot' %> của bạn thông qua liên kết dưới đây:</p>
 <% else %>
   <% if account_user&.inviter.blank? %>
   <p>
-    Chào mừng bạn đến với <%= global_config['BRAND_NAME'] || 'Sao Kim Branding' %>! Chúng tôi có một loạt công cụ mạnh mẽ sẵn sàng để bạn khám phá. Trước khi bắt đầu, chúng tôi cần xác minh địa chỉ email của bạn để đảm bảo đó là bạn thực sự.
+    Chào mừng bạn đến với <%= global_config['BRAND_NAME'] || 'AI Agent Chatbot' %>! Chúng tôi có một loạt công cụ mạnh mẽ sẵn sàng để bạn khám phá. Trước khi bắt đầu, chúng tôi cần xác minh địa chỉ email của bạn để đảm bảo đó là bạn thực sự.
   </p>
   <% end %>
   <p>Vui lòng dành một chút thời gian và nhấp vào liên kết bên dưới để kích hoạt tài khoản của bạn.</p>
